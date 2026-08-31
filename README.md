@@ -1,7 +1,6 @@
 - 👋 Hi, I’m @pushpjeetcholkar
-- 👀 I have knowledge of AWS, Google Cloud, AI, ML, Databricks, Apache Spark, Python,Pyspark. Git, Github, Bitbucket, Oracle Database, mysql, Unix, linux and many more technologies
-- 🌱 I’m currently learning AWS Database Speciality
-- 💞️ I’m looking to collaborate on AWS Consulting Projects
+- 👀 I work with  AWS, Google Cloud, AI, ML, Databricks, Apache Spark, Python,Pyspark. Git, Github, Bitbucket, Oracle Database, mysql, Unix, linux and many more technologies
+- 💞️ I’m looking to collaborate on AWS/AIML/Database Consulting Projects
 - 📫 How to reach me ... pc@pitcsolutions.com
 
 <!---
