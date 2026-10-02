@@ -1,0 +1,81 @@
+# Regenerates the stats cards and the contribution snake once a day and commits
+# them to /profile, so the README never depends on a third-party image server.
+# No secrets to configure: it runs on the built-in GITHUB_TOKEN.
+name: Refresh profile cards
+
+on:
+  schedule:
+    - cron: "30 1 * * *" # every day at 07:00 IST
+  workflow_dispatch: # "Run workflow" button in the Actions tab
+  push:
+    branches: [main]
+    paths: [".github/workflows/profile.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: profile-cards
+  cancel-in-progress: true
+
+env:
+  DARK: bg_color=0d1117&title_color=22d3ee&icon_color=a78bfa&text_color=c9d1d9&border_color=30363d
+  LIGHT: bg_color=ffffff&title_color=0891b2&icon_color=7c3aed&text_color=24292f&border_color=d0d7de
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Stats card (dark)
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: stats
+          options: "username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&rank_icon=github&${{ env.DARK }}"
+          path: profile/stats-dark.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+
+      - name: Stats card (light)
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: stats
+          options: "username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&rank_icon=github&${{ env.LIGHT }}"
+          path: profile/stats-light.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+
+      - name: Languages card (dark)
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: top-langs
+          options: "username=${{ github.repository_owner }}&layout=compact&langs_count=8&${{ env.DARK }}"
+          path: profile/langs-dark.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+
+      - name: Languages card (light)
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: top-langs
+          options: "username=${{ github.repository_owner }}&layout=compact&langs_count=8&${{ env.LIGHT }}"
+          path: profile/langs-light.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+
+      - name: Contribution snake
+        uses: Platane/snk/svg-only@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            profile/snake-light.svg?color_snake=#7c3aed
+            profile/snake-dark.svg?palette=github-dark&color_snake=#22d3ee
+
+      - name: Commit refreshed cards
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add profile/*.svg
+          git commit -m "Refresh profile cards" || exit 0
+          git push
